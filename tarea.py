@@ -38,11 +38,15 @@ class CoordenadasMock:
     def obtener_coordenadas(self, ciudad):
         Lima = Coordenada (-12.1, -77.0)
         Cusco = Coordenada (-13.5, -72)
+        Arequipa = Coordenada (-16.4, -71.5)
+
         if ciudad.nombre_ciudad=="Lima":
             return Lima
         
-        if ciudad.nombre_ciudad=="Cusco":
+        elif ciudad.nombre_ciudad=="Cusco":
             return Cusco
+        elif ciudad.nombre_ciudad=="Arequipa":
+            return Arequipa
     
 import math
 
@@ -67,9 +71,25 @@ class ObtenerCoordenadas:
     def obtener_coordenadas(self, ciudad):
         return self.strategy.obtener_coordenadas(ciudad)
 
+def calcular_minima_distancia_entre_tres(ciudad1, ciudad2, ciudad3, obtener_coordenadas):
+    coord1 = obtener_coordenadas.obtener_coordenadas(ciudad1)
+    coord2 = obtener_coordenadas.obtener_coordenadas(ciudad2)
+    coord3 = obtener_coordenadas.obtener_coordenadas(ciudad3)
+
+    if coord1 and coord2 and coord3:
+        distancia1_2 = calcular_distancia(coord1, coord2)
+        distancia1_3 = calcular_distancia(coord1, coord3)
+        distancia2_3 = calcular_distancia(coord2, coord3)
+        
+        distancia_minima = min(distancia1_2, distancia1_3, distancia2_3)
+        
+        return distancia_minima
+    else:
+        return None
 
 ciudad1 = Ciudad("Lima", "Peru")
 ciudad2 = Ciudad("Cusco", "Peru")
+ciudad3 = Ciudad("Arequipa", "Peru")
 
 
 if __name__ == "__main__":
@@ -82,43 +102,50 @@ if __name__ == "__main__":
         coordenadas_csv = ObtenerCoordenadas(CoordenadasDesdeCSV('worldcities.csv'))
         coord1 = coordenadas_csv.obtener_coordenadas(ciudad1)
         coord2 = coordenadas_csv.obtener_coordenadas(ciudad2)
+        coord3 = coordenadas_csv.obtener_coordenadas(ciudad3)
     
         print("Coordenadas desde CSV:")
         print(coord1.latitud, coord1.longitud)
         print(coord2.latitud, coord2.longitud)
-        return coord1, coord2
+        print(coord3.latitud, coord3.longitud)
+        return coord1, coord2, coord3
 
     def opc2():
         coordenadas_api = ObtenerCoordenadas(CoordenadasDesdeAPI())
         coord1 = coordenadas_api.obtener_coordenadas(ciudad1)
         time.sleep(3)
         coord2 = coordenadas_api.obtener_coordenadas(ciudad2)
-
+        time.sleep(3)
+        coord3 = coordenadas_api.obtener_coordenadas(ciudad3)
+        
         print("Coordenadas desde API:")
         print(coord1.latitud, coord1.longitud)
         print(coord2.latitud, coord2.longitud)
-        return coord1, coord2
+        print(coord3.latitud, coord3.longitud)
+        return coord1, coord2, coord3
 
     def opc3():
         coordenadas_mock = ObtenerCoordenadas(CoordenadasMock())
         coord1 = coordenadas_mock.obtener_coordenadas(ciudad1)
         coord2 = coordenadas_mock.obtener_coordenadas(ciudad2)
+        coord3 = coordenadas_mock.obtener_coordenadas(ciudad3)
 
         print("Coordenadas mock:")
         print(coord1.latitud, coord1.longitud)
         print(coord2.latitud, coord2.longitud)
-        return coord1, coord2
+        print(coord3.latitud, coord3.longitud)
+        return coord1, coord2, coord3
 
     if opc==1: 
-        coord1, coord2 = opc1()
+        coord1, coord2, coord3 = opc1()
     elif opc==2: 
-        coord1, coord2 = opc2()
+        coord1, coord2, coord3 = opc2()
     else: 
-        coord1, coord2 = opc3()
+        coord1, coord2, coord3 = opc3()
 
 
-    if coord1 and coord2:
-        distancia = calcular_distancia(coord1, coord2)
-        print(f"La distancia entre {ciudad1.nombre_ciudad} y {ciudad2.nombre_ciudad} es {distancia:.2f} km.")
+    if coord1 and coord2 and coord3:
+        distancia_minima = calcular_minima_distancia_entre_tres(coord1, coord2)
+        print(f"La distancia mínima entre {ciudad1.nombre_ciudad} y {ciudad2.nombre_ciudad} y {ciudad3.nombre_ciudad} es {distancia_minima} km.")
     else:
-        print("No se pudieron obtener las coordenadas de una o ambas ciudades.")
+        print("No se pudieron obtener las coordenadas de una o más ciudades.")
