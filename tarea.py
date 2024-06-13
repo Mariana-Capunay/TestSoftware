@@ -47,10 +47,13 @@ class CoordenadasMock:
             return Cusco
         elif ciudad.nombre_ciudad=="Arequipa":
             return Arequipa
+        
+        return None
     
 import math
 
 def calcular_distancia(coord1, coord2):
+    if not coord1 or not coord2: return None
     R = 6371  # Radio de la Tierra en km
     lat1, lon1 = math.radians(coord1.latitud), math.radians(coord1.longitud)
     lat2, lon2 = math.radians(coord2.latitud), math.radians(coord2.longitud)
